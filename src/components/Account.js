@@ -1,6 +1,7 @@
 //Get these values.
 import { useState, useEffect } from "react"
-import { supabase } from "../supabaseClient" 
+import { supabase } from "../supabaseClient"
+import { Avatar } from './Avatar' 
 
 const Account = ({ session }) =>{
 
