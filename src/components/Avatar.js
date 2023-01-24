@@ -4,7 +4,7 @@ import React from 'react'
 import { supabase } from '../supabaseClient'
 import Icon from'./assets/Face.png'
 import camera from './assets/camera on.png'
-import { supabase } from './../supabaseClient';
+//import { supabase } from './../supabaseClient';
 
 
 export default function Avatar({url,size, onUpload}){
