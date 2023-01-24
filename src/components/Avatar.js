@@ -1,11 +1,62 @@
+import { useEffect, useState } from 'react'
 import React from 'react'
 //import Avatar from './Avatar';
 import { supabase } from '../supabaseClient'
 import Icon from'./assets/Face.png'
 import camera from './assets/camera on.png'
+import { supabase } from './../supabaseClient';
 
 
-export default function Avatar(){
+export default function Avatar({url,size, onUpload}){
+  
+  const [avatarUrl, setAvatarUrl] = useState(null)
+  const [uploading, setUploading] = useState(false)
+
+  useEffect(() => {
+    if (url) downloadImage(url)
+  }, [url])
+
+
+    const uploadAvatar = async(event)=>{
+      try {
+        setUploading(true)
+
+        if (!event.target.files || event.target.files.length === 0) {
+          throw new Error('You must select an image to upload.')
+        }
+
+        const file = event.target.files[0]
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Math.random()}.${fileExt}`
+      const filePath = `${fileName}`
+
+      let{error:uploadError}=await supabase.storage.from("avatars").upload(filePath,file)
+
+        if(uploadError){
+          throw uploadError
+        }
+
+        onUpload(filePath)
+
+        
+      } catch (error) {
+        
+      }
+    }
+
+    const downloadImage = async(path)=>{
+        try {
+          const{data,error} = await supabase.storage.from("avatars").download(path)
+          if(error){
+            throw error
+          }
+          const url = URL.createObjectURL(data)
+          setAvatarUrl(url) 
+        } catch (error) {
+          console.log('Error downloading image: ', error.message)
+        }
+    }
+  
   return(
     <div style={{ width: size }} aria-live="polite" className='container mx-auto text-center'>
     <div class="flex justify-center">
