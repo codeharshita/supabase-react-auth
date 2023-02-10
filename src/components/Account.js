@@ -14,60 +14,60 @@ const Account = ({ session }) =>{
         getProfile()
     }, [session])
 
-    const getProfile = async () =>{
-        try{
-            setLoading(true)
-            const user =supabase.auth.user()
-
-            let{data,error,status } = await supabase 
+    const getProfile = async () => {
+        try {
+          setLoading(true)
+          const { user } = session
+    
+          let { data, error, status } = await supabase
             .from('profiles')
             .select(`username, website, avatar_url`)
             .eq('id', user.id)
             .single()
-
-            if(data){
-                setUsername(data.username)
-                setWebsite(data.website)
-                setAvatarUrl(data.avatar_url)
-            }
-
-        }catch(error){
-            alert(error.message)
-        }finally{
-            setLoading(false)
-        }
-
-    }
-
-    const updateProfile = async (e) =>{
-        e.preventDefault()
-
-        try {
-            setLoading(true)
-            const user = supabase.auth.user(); 
-
-            const updates = {
-                id:user.id,
-                username,
-                website,
-                avatar_url, 
-                update_at: new Date()
-            }
-
-            let {error}= await supabase.from("profiles")
-            .upsert(updates,{returning: 'minimal'})
-
-            if(error){
-                throw error;
-            }
-
+    
+          if (error && status !== 406) {
+            throw error
+          }
+    
+          if (data) {
+            setUsername(data.username)
+            setWebsite(data.website)
+            setAvatarUrl(data.avatar_url)
+          }
         } catch (error) {
-            alert(error.message)
-            
-        } finally{
-            setLoading(false)
+          alert(error.message)
+        } finally {
+          setLoading(false)
         }
-    }
+      }
+    
+
+    const updateProfile = async (e) => {
+        e.preventDefault()
+    
+        try {
+          setLoading(true)
+          const { user } = session
+    
+          const updates = {
+            id: user.id,
+            username,
+            website,
+            avatar_url,
+            updated_at: new Date(),
+          }
+    
+          let { error } = await supabase.from('profiles').upsert(updates)
+    
+          if (error) {
+            throw error
+          }
+        } catch (error) {
+          alert(error.message)
+        } finally {
+          setLoading(false)
+        }
+      }
 
 
 
